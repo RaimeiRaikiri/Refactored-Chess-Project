@@ -21,18 +21,17 @@ class Board:
         
         # The tiles are positioned in an array in alignment with
         # the position array so they can be accessed using the same indexes as the pieces position
-        self.tileArray = [[pygame.Rect(100*x,100,100,100) for x in range(1,9)],
-                          [pygame.Rect(100*x,200,100,100) for x in range(1,9)],
-                          [pygame.Rect(100*x,300,100,100) for x in range(1,9)],
-                          [pygame.Rect(100*x,400,100,100) for x in range(1,9)],
-                          [pygame.Rect(100*x,500,100,100) for x in range(1,9)],
-                          [pygame.Rect(100*x,600,100,100) for x in range(1,9)],
-                          [pygame.Rect(100*x,700,100,100) for x in range(1,9)],
-                          [pygame.Rect(100*x,800,100,100) for x in range(1,9)]]
+        self.tileArray = [[pygame.Rect(100*x,0,100,100) for x in range(8)],
+                          [pygame.Rect(100*x,100,100,100) for x in range(8)],
+                          [pygame.Rect(100*x,200,100,100) for x in range(8)],
+                          [pygame.Rect(100*x,300,100,100) for x in range(8)],
+                          [pygame.Rect(100*x,400,100,100) for x in range(8)],
+                          [pygame.Rect(100*x,500,100,100) for x in range(8)],
+                          [pygame.Rect(100*x,600,100,100) for x in range(8)],
+                          [pygame.Rect(100*x,700,100,100) for x in range(8)]]
         
         # Surface to put all the tiles on and the place on the screen on game start
-        self.surface = pygame.Surface((1000,1000))
-        self.surface.fill('white')
+        self.surface = pygame.Surface((800,800))
         
         # Added alternating black and white tiles to the surface
         for x in range(8):
