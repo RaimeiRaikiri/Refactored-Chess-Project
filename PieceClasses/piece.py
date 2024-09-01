@@ -2,7 +2,7 @@ import pygame
 
 class piece:
     
-    def __init__(self, color, indexIOnArray = int, indexJOnArray = int):
+    def __init__(self, color, indexIOnArray: int, indexJOnArray: int, boardArray = list[list]):
         # Visual variables
         self.size = (50,50)
         self.color = color
@@ -13,6 +13,8 @@ class piece:
         self.indexI = indexIOnArray
         self.indexJ = indexJOnArray
         self.moves = None
+        self.board = boardArray
+        self.onBoard = True
     
     
     # Get image and fit it to size of piece
