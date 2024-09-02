@@ -204,7 +204,7 @@ class Queen(piece):
                             break
                 return moves
             
-    def get_moves(self) -> list[tuple]:
+    def get_moves(self):
         linear = self.linear_moves()
         diagonal = self.diagonal_moves()
         return linear + diagonal
