@@ -7,7 +7,7 @@ class Knight(piece):
         super().__init__(color, indexIOnArray, indexJOnArray, boardArray)
     
     def get_image(self):
-        return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}queen.png')
+        return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}knight.png')
     
     def get_moves(self):
         if self.onBoard:
