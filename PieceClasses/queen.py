@@ -3,12 +3,13 @@ from PieceClasses.piece import piece
 
 
 class Queen(piece):
+    
     def __init__(self, color, indexIOnArray: int, indexJOnArray: int, boardArray: list[list]):
         super().__init__(color, indexIOnArray, indexJOnArray, boardArray)
     
     def get_image(self):
         return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}queen.png')
-    
+
     def diagonal_moves(self):
         if self.onBoard:
             moves = []

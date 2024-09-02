@@ -1,4 +1,5 @@
 import pygame, sys, PieceClasses
+import PieceClasses.queen
 from board import Board
 
 pygame.init()
@@ -17,9 +18,10 @@ whitecastle1 =  PieceClasses.Castle('white', 7,0,board.positionArray)
 whitecastle2 =  PieceClasses.Castle('white', 7,7,board.positionArray)
 whitebishop1 =  PieceClasses.Bishop('white', 7,2,board.positionArray)
 whitebishop2 =  PieceClasses.Bishop('white', 7,5,board.positionArray)
+whitequeen = PieceClasses.Queen('white',7,4, board.positionArray )
 
 # list of all white pieces
-white_pieces = [whitecastle1, whitecastle2, whitebishop1, whitebishop2]
+white_pieces = [whitecastle1, whitecastle2, whitebishop1, whitebishop2, whitequeen]
 
 
 # black pieces
@@ -27,8 +29,10 @@ blackcastle1 =  PieceClasses.Castle('black', 0,0,board.positionArray)
 blackcastle2 =  PieceClasses.Castle('black', 0,7,board.positionArray)
 blackbishop1 =  PieceClasses.Bishop('black', 0,2,board.positionArray)
 blackbishop2 =  PieceClasses.Bishop('black', 0,5,board.positionArray)
+blackqueen = PieceClasses.Queen('black', 0,4,board.positionArray)
+
 # list of all black pieces 
-black_pieces = [blackcastle1, blackcastle2, blackbishop1, blackbishop2]
+black_pieces = [blackcastle1, blackcastle2, blackbishop1, blackbishop2, blackqueen]
 
 
 def DrawBoardBorder():
@@ -49,17 +53,19 @@ def put_pieces_on_board():
     screen.blit(whitecastle2.surface, whitecastle2.rect)
     screen.blit(whitebishop1.surface, whitebishop1.rect)
     screen.blit(whitebishop2.surface, whitebishop2.rect)
+    screen.blit(whitequeen.surface, whitequeen.rect)
     
     screen.blit(blackcastle1.surface, blackcastle1.rect)
     screen.blit(blackcastle2.surface, blackcastle2.rect)
     screen.blit(blackbishop1.surface, blackbishop1.rect)
     screen.blit(blackbishop2.surface, blackbishop2.rect)
+    screen.blit(blackqueen.surface, blackqueen.rect)
     
     
     
 
     
-    center_pieces(whitecastle1, whitecastle2, blackcastle1, blackcastle2, whitebishop1, whitebishop2, blackbishop1, blackbishop2)
+    center_pieces(whitecastle1, whitecastle2, blackcastle1, blackcastle2, whitebishop1, whitebishop2, blackbishop1, blackbishop2, whitequeen, blackqueen)
 
 
 mouse_point = pygame.Rect(1100,1100,1,1)
