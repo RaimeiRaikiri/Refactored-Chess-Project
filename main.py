@@ -15,15 +15,22 @@ collisionlist = sum(board.tileArray, [])
 # white pieces
 whitecastle1 =  PieceClasses.Castle('white', 7,0,board.positionArray)
 whitecastle2 =  PieceClasses.Castle('white', 7,7,board.positionArray)
+whitebishop1 =  PieceClasses.Bishop('white', 7,2,board.positionArray)
+whitebishop2 =  PieceClasses.Bishop('white', 7,5,board.positionArray)
+
 # list of all white pieces
-white_pieces = [whitecastle1, whitecastle2]
+white_pieces = [whitecastle1, whitecastle2, whitebishop1, whitebishop2]
 
 
 # black pieces
 blackcastle1 =  PieceClasses.Castle('black', 0,0,board.positionArray)
 blackcastle2 =  PieceClasses.Castle('black', 0,7,board.positionArray)
+blackbishop1 =  PieceClasses.Bishop('black', 0,2,board.positionArray)
+blackbishop2 =  PieceClasses.Bishop('black', 0,5,board.positionArray)
 # list of all black pieces 
-black_pieces = [blackcastle1.rect, blackcastle2.rect]
+black_pieces = [blackcastle1, blackcastle2, blackbishop1, blackbishop2]
+
+
 def DrawBoardBorder():
     # Draws a rect border around the board to prevent the pieces from leaving the board
     pygame.draw.rect(screen, (0,0,0), board.surface.get_rect(), width = 2)
@@ -36,26 +43,37 @@ def center_pieces(*pieces):
     for piece in pieces:
         if piece.rect.collidelist(collisionlist) != -1:
             piece.rect.center = collisionlist[piece.rect.collidelist(collisionlist)].center 
-
-    
+   
 def put_pieces_on_board():
     screen.blit(whitecastle1.surface, whitecastle1.rect)
     screen.blit(whitecastle2.surface, whitecastle2.rect)
+    screen.blit(whitebishop1.surface, whitebishop1.rect)
+    screen.blit(whitebishop2.surface, whitebishop2.rect)
+    
     screen.blit(blackcastle1.surface, blackcastle1.rect)
     screen.blit(blackcastle2.surface, blackcastle2.rect)
+    screen.blit(blackbishop1.surface, blackbishop1.rect)
+    screen.blit(blackbishop2.surface, blackbishop2.rect)
     
-    center_pieces(whitecastle1, whitecastle2, blackcastle1, blackcastle2)
+    
+    
+
+    
+    center_pieces(whitecastle1, whitecastle2, blackcastle1, blackcastle2, whitebishop1, whitebishop2, blackbishop1, blackbishop2)
+
+
+mouse_point = pygame.Rect(1100,1100,1,1)
 
 def which_piece_mouse_selects():
     if white_players_turn and mouse_point.collidelist(white_pieces) != -1:
         return white_pieces[mouse_point.collidelist(white_pieces)]
     elif not white_players_turn and mouse_point.collidelist(black_pieces) != -1:
         return black_pieces[mouse_point.collidelist(black_pieces)]
-
-mouse_point = pygame.Rect(1100,1100,1,1)
+    
 def mouse_tracking(whereMouseIs):
     mouse_point.x, mouse_point.y = whereMouseIs
     pygame.draw.rect(screen, (0,0,0), mouse_point, width = 0)
+    
 def check_mouse_in_border(whereMouseIs):
     if board.surface.get_rect().collidepoint(whereMouseIs):
         return True
