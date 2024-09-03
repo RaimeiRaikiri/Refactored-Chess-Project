@@ -144,10 +144,19 @@ def opposite_pawn_moved_twice():
         for piece in white_pawns:
                 if piece.justMovedTwice and piece.onBoard:
                     return True, piece
+def promote_pawn(piece):
+    if white_players_turn:
+        if piece.rect.collidelist(whitePawnPromotionZone) != -1:
+            piece.promote_pawn()
+    else:
+        if piece.rect.collidelist(blackPawnPromotionZone) != -1:
+            piece.promote_pawn()
+        
 game_over = False
 # If not white players turn it is black players
 white_players_turn = True
 current_moving_piece = None
+
 while True:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -159,10 +168,13 @@ while True:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_tracking(whereMouseIs)
                     current_moving_piece = which_piece_mouse_selects()
+                    
                 if event.type == pygame.MOUSEBUTTONUP and check_mouse_in_border(whereMouseIs):
                     if current_moving_piece:
                         current_moving_piece.rect.topleft = whereMouseIs
                         center_pieces(current_moving_piece)
+                        if current_moving_piece in white_pawns or current_moving_piece in black_pawns:
+                            promote_pawn(current_moving_piece)
                     
     screen.fill('white')
     whereMouseIs = pygame.mouse.get_pos()
