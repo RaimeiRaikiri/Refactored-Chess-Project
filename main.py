@@ -1,4 +1,5 @@
 import pygame, sys, PieceClasses
+import PieceClasses.king
 import PieceClasses.queen
 from board import Board
 
@@ -18,7 +19,7 @@ whitecastle1 =  PieceClasses.Castle('white', 7,0,board.positionArray)
 whitecastle2 =  PieceClasses.Castle('white', 7,7,board.positionArray)
 whitebishop1 =  PieceClasses.Bishop('white', 7,2,board.positionArray)
 whitebishop2 =  PieceClasses.Bishop('white', 7,5,board.positionArray)
-whitequeen = PieceClasses.Queen('white',7,4, board.positionArray )
+whitequeen = PieceClasses.Queen('white',7,3, board.positionArray )
 whiteknight1 = PieceClasses.Knight('white', 7,1, board.positionArray)
 whiteknight2 = PieceClasses.Knight('white', 7,6, board.positionArray)
 whitepawn1 = PieceClasses.Pawn('white', 6,0,board.positionArray)
@@ -29,10 +30,11 @@ whitepawn5 = PieceClasses.Pawn('white', 6,4,board.positionArray)
 whitepawn6 = PieceClasses.Pawn('white', 6,5,board.positionArray)
 whitepawn7 = PieceClasses.Pawn('white', 6,6,board.positionArray)
 whitepawn8 = PieceClasses.Pawn('white', 6,7,board.positionArray)
+whiteking = PieceClasses.King('white', 7,4, board.positionArray)
 
 
 # list of all white pieces
-white_pieces = [whitecastle1, whitecastle2, whitebishop1, whitebishop2, whitequeen, whiteknight1, whiteknight2, whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8]
+white_pieces = [whiteking,whitecastle1, whitecastle2, whitebishop1, whitebishop2, whitequeen, whiteknight1, whiteknight2, whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8]
 white_pawns = [whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8]
 whitePawnPromotionZone = [tile for tile in board.tileArray[0]]
 whiteEnPassanteZone = [tile for tile in board.tileArray[3]]
@@ -42,7 +44,7 @@ blackcastle1 =  PieceClasses.Castle('black', 0,0,board.positionArray)
 blackcastle2 =  PieceClasses.Castle('black', 0,7,board.positionArray)
 blackbishop1 =  PieceClasses.Bishop('black', 0,2,board.positionArray)
 blackbishop2 =  PieceClasses.Bishop('black', 0,5,board.positionArray)
-blackqueen = PieceClasses.Queen('black', 0,4,board.positionArray)
+blackqueen = PieceClasses.Queen('black', 0,3,board.positionArray)
 blackknight1 = PieceClasses.Knight('black', 0,1,board.positionArray)
 blackknight2 = PieceClasses.Knight('black', 0,6,board.positionArray)
 blackpawn1 = PieceClasses.Pawn('black', 1,0,board.positionArray)
@@ -53,10 +55,11 @@ blackpawn5 = PieceClasses.Pawn('black', 1,4,board.positionArray)
 blackpawn6 = PieceClasses.Pawn('black', 1,5,board.positionArray)
 blackpawn7 = PieceClasses.Pawn('black', 1,6,board.positionArray)
 blackpawn8 = PieceClasses.Pawn('black', 1,7,board.positionArray)
+blackking = PieceClasses.King('black', 0,4, board.positionArray)
 
 
 # list of all black pieces 
-black_pieces = [blackcastle1, blackcastle2, blackbishop1, blackbishop2, blackqueen, blackknight1, blackknight2, blackpawn1, blackpawn2, blackpawn3, blackpawn4, blackpawn5,blackpawn6,blackpawn7,blackpawn8]
+black_pieces = [blackking,blackcastle1, blackcastle2, blackbishop1, blackbishop2, blackqueen, blackknight1, blackknight2, blackpawn1, blackpawn2, blackpawn3, blackpawn4, blackpawn5,blackpawn6,blackpawn7,blackpawn8]
 black_pawns = [blackpawn1, blackpawn2, blackpawn3, blackpawn4, blackpawn5,blackpawn6,blackpawn7,blackpawn8]
 blackPawnPromotionZone = [tile for tile in board.tileArray[7]]
 blackEnPassanteZone = [tile for tile in board.tileArray[4]]
@@ -90,7 +93,7 @@ def put_pieces_on_board():
     screen.blit(whitepawn6.surface,whitepawn6.rect)
     screen.blit(whitepawn7.surface,whitepawn7.rect)
     screen.blit(whitepawn8.surface,whitepawn8.rect)
-    
+    screen.blit(whiteking.surface,whiteking.rect)
     
     screen.blit(blackcastle1.surface, blackcastle1.rect)
     screen.blit(blackcastle2.surface, blackcastle2.rect)
@@ -107,6 +110,7 @@ def put_pieces_on_board():
     screen.blit(blackpawn6.surface,blackpawn6.rect)
     screen.blit(blackpawn7.surface,blackpawn7.rect)
     screen.blit(blackpawn8.surface,blackpawn8.rect)
+    screen.blit(blackking.surface, blackking.rect)
     
     
     
@@ -114,7 +118,7 @@ def put_pieces_on_board():
     
 
     
-    center_pieces(whitecastle1, whitecastle2, blackcastle1, blackcastle2, whitebishop1, whitebishop2, blackbishop1, blackbishop2, whitequeen, blackqueen, whiteknight1, whiteknight2, blackknight2, blackknight1, whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8,blackpawn1, blackpawn2, blackpawn3, blackpawn4, blackpawn5,blackpawn6,blackpawn7,blackpawn8)
+    center_pieces(whiteking, blackking,whitecastle1, whitecastle2, blackcastle1, blackcastle2, whitebishop1, whitebishop2, blackbishop1, blackbishop2, whitequeen, blackqueen, whiteknight1, whiteknight2, blackknight2, blackknight1, whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8,blackpawn1, blackpawn2, blackpawn3, blackpawn4, blackpawn5,blackpawn6,blackpawn7,blackpawn8)
 
 
 mouse_point = pygame.Rect(1100,1100,1,1)
