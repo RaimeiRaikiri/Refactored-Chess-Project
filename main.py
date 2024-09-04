@@ -66,6 +66,18 @@ blackEnPassanteZone = [tile for tile in board.tileArray[4]]
 
 list_of_pieces = black_pieces + white_pieces
 
+# For O(1) look up time of indexs of each tile rather than iterating over an 2D list each time 
+tile_index = {
+    '0' : (0,0), '1' : (0,1), '2' :  (0,2), '3' : (0,3), '4' : (0,4), '5' : (0,5), '6' : (0,6), '7' : (0,7),
+    '8' : (1,0), '9' : (1,1), '10' : (1,2), '11' : (1,3), '12' : (1,4), '13' : (1,5), '14' : (1,6), '15' : (1,7),
+    '16' : (2,0), '17' : (2,1), '18' : (2,2), '19' : (2,3), '20' : (2,4), '21' : (2,5), '22' : (2,6), '23' : (2,7),
+    '24' : (3,0), '25' : (3,1), '26' : (3,2), '27' : (3,3), '28' : (3,4), '29' : (3,5), '30' : (3,6), '31' : (3,7),
+    '32' : (4,0), '33' : (4,1), '34' : (4,2), '35' : (4,3), '36' : (4,4), '37' : (4,5), '38' : (4,6), '39' : (4,7),
+    '40' : (5,0), '41' : (5,1), '42' : (5,2), '43' : (5,3), '44' : (5,4), '45' : (5,5), '46' : (5,6),'47' : (5,7),
+    '48' : (6,0), '49' : (6,1), '50' : (6,2), '51' : (6,3), '52' : (6,4), '53' : (6,5), '54' : (6,6), '55' : (6,7),
+    '56' : (7,0), '57' : (7,1), '58' : (7,2), '59' : (7,3), '60' : (7,4), '61' : (7,5), '62' : (7,6), '63' : (7,7),   
+}
+
 def DrawBoardBorder():
     # Draws a rect border around the board to prevent the pieces from leaving the board
     pygame.draw.rect(screen, (0,0,0), board.surface.get_rect(), width = 2)
@@ -133,11 +145,42 @@ def handle_collisions(current_piece):
             # If collided with remove from gameloop and list of pieces
             collided_piece = white_pieces[current_piece.rect.collidelist(white_pieces)]
             list_of_pieces.remove(collided_piece)
-            
+
+def piece_can_move_here(piece):
+    tile, tiles_index = where_piece_tries_to_move()
+    piece_potential_moves = None
+    if piece in white_pawns or piece in black_pawns:
+        piece_potential_moves = piece.get_moves(whiteEnPassanteZone, blackEnPassanteZone, piece_that_moved_last)
+    else:
+        piece_potential_moves = piece.get_moves()
+        
+    if piece_potential_moves:
+        for move in piece_potential_moves:
+            if move == tiles_index:
+                return tiles_index
+    
+
+def where_piece_tries_to_move():
+    if mouse_point.collidelist(collisionlist) != -1:
+        return collisionlist[mouse_point.collidelist(collisionlist)], tile_index[f'{mouse_point.collidelist(collisionlist)}']
+def piece_moved(moved_piece, tile_index):
+    if tile_index:
+        # Save info from piece
+        piece_index = (moved_piece.indexI,moved_piece.indexJ)
+        piece_number = board.positionArray[piece_index[0]][piece_index[1]]
+        # Make changes to the board
+        board.positionArray[piece_index[0]][piece_index[1]] = 0
+        board.positionArray[tile_index[0]][tile_index[1]] = piece_number
+        # Make changes to info of piece
+        moved_piece.indexI, moved_piece.indexJ = tile_index
+        return True
+    
+    
 game_over = False
 # If not white players turn it is black players
 white_players_turn = True
 current_moving_piece = None
+piece_that_moved_last = None
 
 while True:
     for event in pygame.event.get():
@@ -152,12 +195,15 @@ while True:
                     current_moving_piece = which_piece_mouse_selects()
                     
                 if event.type == pygame.MOUSEBUTTONUP and check_mouse_in_border(whereMouseIs):
+                    mouse_tracking(whereMouseIs)
                     if current_moving_piece:
-                        current_moving_piece.rect.topleft = whereMouseIs
-                        center_pieces(current_moving_piece)
-                        handle_collisions(current_moving_piece)
-                        if current_moving_piece in white_pawns or current_moving_piece in black_pawns:
-                            promote_pawn(current_moving_piece)
+                        if piece_moved(current_moving_piece, piece_can_move_here(current_moving_piece)):
+                            current_moving_piece.rect.topleft = whereMouseIs
+                            center_pieces(current_moving_piece)
+                            handle_collisions(current_moving_piece)
+                            piece_that_moved_last = current_moving_piece
+                            if current_moving_piece in white_pawns or current_moving_piece in black_pawns:
+                                promote_pawn(current_moving_piece)
                     
     screen.fill('white')
     whereMouseIs = pygame.mouse.get_pos()
