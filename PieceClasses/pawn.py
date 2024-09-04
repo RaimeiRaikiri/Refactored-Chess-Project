@@ -76,18 +76,18 @@ class Pawn(piece):
                         
                         # Taking piece diagonally moves
                         if self.indexJ == 0:
-                            if self.board[self.indexI+1][self.indexJ+1] > 1:
+                            if self.board[self.indexI+1][self.indexJ+1] >= 1:
                                 moves.append((self.indexI+1,self.indexJ+1))
                                 
                         elif self.indexJ == 7:
-                            if self.board[self.indexI+1][self.indexJ-1] > 1:
+                            if self.board[self.indexI+1][self.indexJ-1] >= 1:
                                 moves.append((self.indexI+1,self.indexJ-1))
                                 
                         elif self.indexJ < 7 and self.indexJ > 0:
-                            if self.board[self.indexI+1][self.indexJ-1] > 1:
+                            if self.board[self.indexI+1][self.indexJ-1] >= 1:
                                 moves.append((self.indexI+1,self.indexJ-1))
                                 
-                            if self.board[self.indexI+1][self.indexJ+1] > 1:
+                            if self.board[self.indexI+1][self.indexJ+1] >= 1:
                                 moves.append((self.indexI+1,self.indexJ+1))
                         
                         return moves
