@@ -107,7 +107,6 @@ class Queen(piece):
                 return moves
     
     def linear_moves(self):
-        if self.onBoard:
             moves = []
             if self.color == 'white':
                 # Up direction moves
