@@ -23,7 +23,7 @@ class Pawn(piece):
                     if self.rect.collidelist(blackEnPassanteZone) != -1 and self.board[piece.index+1][piece.indexJ] == 0:
                         return (self.indexI+1,piece.indexJ)
                         
-    def get_moves(self):
+    def get_moves(self, whiteEnPassanteZone, blackEnPassanteZone):
             moves = []
             if self.promoted:
                 # If promoted to queen change move set
@@ -56,7 +56,8 @@ class Pawn(piece):
                                 
                             if self.board[self.indexI-1][self.indexJ+1] < 1:
                                 moves.append((self.indexI-1,self.indexJ+1))
-                        
+                                
+                        moves.append(self.en_passante(whiteEnPassanteZone, blackEnPassanteZone))
                         return moves
                             
                 elif self.color == 'black':
@@ -84,6 +85,7 @@ class Pawn(piece):
                             if self.board[self.indexI+1][self.indexJ+1] > 1:
                                 moves.append((self.indexI+1,self.indexJ+1))
                         
+                        moves.append(self.en_passante(whiteEnPassanteZone, blackEnPassanteZone))
                         return moves
             
 
