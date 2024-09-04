@@ -126,6 +126,7 @@ def opposite_pawn_moved_twice():
         for piece in white_pawns:
                 if piece.justMovedTwice and piece.onBoard:
                     return True, piece
+                
 def promote_pawn(piece):
     if white_players_turn:
         if piece.rect.collidelist(whitePawnPromotionZone) != -1:
@@ -150,8 +151,9 @@ def handle_collisions(current_piece):
 def piece_can_move_here(piece):
     tile, tiles_index = where_piece_tries_to_move()
     piece_potential_moves = None
+    # If a pawn and in the en passante zone, check for en passante possible moves
     if (piece in white_pawns or piece in black_pawns ) and piece.in_passante_zone:
-        if piece.en_passante(piece_that_moved_last):
+        if piece.en_passante(piece_that_moved_last): # If en passante moves exist
             piece_potential_moves = piece.get_moves() + piece.en_passante(piece_that_moved_last)
         else:
             piece_potential_moves = piece.get_moves()
@@ -187,7 +189,7 @@ def in_passante_zone(pawn):
         else:
             pawn.in_passante_zone = False
     else:
-        if pawn.rect.collisionlist(blackEnPassanteZone) != -1:
+        if pawn.rect.collidelist(blackEnPassanteZone) != -1:
             pawn.in_passante_zone = True
         else:
             pawn.in_passante_zone = False
@@ -197,7 +199,7 @@ game_over = False
 white_players_turn = True
 current_moving_piece = None
 piece_that_moved_last = None
-white_pawn_En_Passante = False
+
 while True:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -222,7 +224,13 @@ while True:
                             if current_moving_piece in white_pawns or current_moving_piece in black_pawns:
                                 promote_pawn(current_moving_piece)
                                 in_passante_zone(current_moving_piece)
+                                if current_moving_piece.moved == False:
+                                    current_moving_piece.moved = True
                             
+                            if white_players_turn:
+                                white_players_turn = False
+                            else:
+                                white_players_turn = True
                             UpdateBoard(list_of_pieces)
                     
     screen.fill('white')
