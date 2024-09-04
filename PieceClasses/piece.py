@@ -6,9 +6,7 @@ class piece:
         # Positional variables
         self.indexI = indexIOnArray
         self.indexJ = indexJOnArray
-        self.moves = None
         self.board = boardArray
-        self.onBoard = True
         self.x, self.y = self.get_position()
         
         # Visual variables

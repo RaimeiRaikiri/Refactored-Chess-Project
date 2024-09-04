@@ -10,7 +10,6 @@ class Knight(piece):
         return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}knight.png')
     
     def get_moves(self):
-        if self.onBoard:
             moves = []
             if self.color == 'white':
                 # Down - Changing index I by 2 

@@ -15,7 +15,6 @@ class Pawn(piece):
             return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}pawn.png')
         
     def en_passante(self, whiteEnPassanteZone, blackEnPassanteZone,piece):
-        if self.onBoard:
             if self.promoted == False:
                 if self.color == 'white':
                     if self.rect.collidelist(whiteEnPassanteZone) != -1 and self.board[piece.index-1][piece.indexJ] == 0:
@@ -25,7 +24,6 @@ class Pawn(piece):
                         return (self.indexI+1,piece.indexJ)
                         
     def get_moves(self):
-        if self.onBoard:
             moves = []
             if self.promoted:
                 # If promoted to queen change move set

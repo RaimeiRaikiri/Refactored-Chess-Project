@@ -10,7 +10,6 @@ class Castle(piece):
             return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}castle.png')
     
     def get_moves(self)->list[tuple]:
-        if self.onBoard:
             moves = []
             if self.color == 'white':
                 # Up direction moves

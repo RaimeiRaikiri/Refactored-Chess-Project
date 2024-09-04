@@ -11,7 +11,6 @@ class Queen(piece):
         return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}queen.png')
 
     def diagonal_moves(self):
-        if self.onBoard:
             moves = []
             if self.color == 'white':
                 # top-right direction moves
