@@ -64,12 +64,15 @@ black_pawns = [blackpawn1, blackpawn2, blackpawn3, blackpawn4, blackpawn5,blackp
 blackPawnPromotionZone = [tile for tile in board.tileArray[7]]
 blackEnPassanteZone = [tile for tile in board.tileArray[4]]
 
+list_of_pieces = black_pieces + white_pieces
+
 def DrawBoardBorder():
     # Draws a rect border around the board to prevent the pieces from leaving the board
     pygame.draw.rect(screen, (0,0,0), board.surface.get_rect(), width = 2)
 # Updates the position array for every piece after every turn so the correct moves can be decided
-def UpdateBoard(piece):
-    piece.board = board.positionArray
+def UpdateBoard(*pieces):
+    for piece in pieces:
+        piece.board = board.positionArray
 
 # Can take any number of chess pieces and center them in the tile they're on
 def center_pieces(*pieces):
@@ -112,15 +115,14 @@ def put_pieces_on_board():
     screen.blit(blackpawn8.surface,blackpawn8.rect)
     screen.blit(blackking.surface, blackking.rect)
     
-    
-    
-    
-    
-
-    
+    # Center all pieces as soon as they are put on board
     center_pieces(whiteking, blackking,whitecastle1, whitecastle2, blackcastle1, blackcastle2, whitebishop1, whitebishop2, blackbishop1, blackbishop2, whitequeen, blackqueen, whiteknight1, whiteknight2, blackknight2, blackknight1, whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8,blackpawn1, blackpawn2, blackpawn3, blackpawn4, blackpawn5,blackpawn6,blackpawn7,blackpawn8)
 
-
+def pieces_on_board(pieces: list):
+    for piece in pieces:
+        if piece.onBoard:
+            screen.blit(piece.surface, piece.rect)
+            center_pieces(piece)
 mouse_point = pygame.Rect(1100,1100,1,1)
 
 def which_piece_mouse_selects():
@@ -155,7 +157,12 @@ def promote_pawn(piece):
     else:
         if piece.rect.collidelist(blackPawnPromotionZone) != -1:
             piece.promote_pawn()
-        
+
+def handle_collisions(current_piece):
+    if white_players_turn:
+        if current_piece.rect.collidelist(black_pieces) != -1:
+            black_pieces[current_piece.rect.collidelist(black_pieces)].onBoard = False
+
 game_over = False
 # If not white players turn it is black players
 white_players_turn = True
@@ -177,6 +184,7 @@ while True:
                     if current_moving_piece:
                         current_moving_piece.rect.topleft = whereMouseIs
                         center_pieces(current_moving_piece)
+                        handle_collisions(current_moving_piece)
                         if current_moving_piece in white_pawns or current_moving_piece in black_pawns:
                             promote_pawn(current_moving_piece)
                     
@@ -185,8 +193,8 @@ while True:
     # Board set up
     screen.blit(board.surface, (0,0))
     DrawBoardBorder()
-    put_pieces_on_board()
+    pieces_on_board(list_of_pieces)
     
-    UpdateBoard(whitecastle1)
+    UpdateBoard(whiteking, blackking,whitecastle1, whitecastle2, blackcastle1, blackcastle2, whitebishop1, whitebishop2, blackbishop1, blackbishop2, whitequeen, blackqueen, whiteknight1, whiteknight2, blackknight2, blackknight1, whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8,blackpawn1, blackpawn2, blackpawn3, blackpawn4, blackpawn5,blackpawn6,blackpawn7,blackpawn8)
     pygame.display.flip()
     clock.tick(60)
