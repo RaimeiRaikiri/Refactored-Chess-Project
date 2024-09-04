@@ -151,10 +151,13 @@ def handle_collisions(current_piece):
 def piece_can_move_here(piece):
     tile, tiles_index = where_piece_tries_to_move()
     piece_potential_moves = None
+    possible_passante = False
     # If a pawn and in the en passante zone, check for en passante possible moves
     if (piece in white_pawns or piece in black_pawns ) and piece.in_passante_zone:
-        if piece.en_passante(piece_that_moved_last): # If en passante moves exist
-            piece_potential_moves = piece.get_moves() + piece.en_passante(piece_that_moved_last)
+        possible_passante = True
+        passante_move = piece.en_passante(piece_that_moved_last)
+        if passante_move: # If en passante moves exist
+            piece_potential_moves = piece.get_moves() + passante_move
         else:
             piece_potential_moves = piece.get_moves()
     else:
@@ -163,6 +166,9 @@ def piece_can_move_here(piece):
     if piece_potential_moves:
         for move in piece_potential_moves:
             if move == tiles_index:
+                if possible_passante and passante_move[0] == move:
+                    board.positionArray[piece_that_moved_last.indexI][piece_that_moved_last.indexJ] == 0
+                    list_of_pieces.remove(piece_that_moved_last)
                 return tiles_index
     
 
@@ -180,6 +186,7 @@ def piece_moved(moved_piece, tile_index):
         board.positionArray[tile_index[0]][tile_index[1]] = piece_number
         # Make changes to info of piece
         moved_piece.indexI, moved_piece.indexJ = tile_index
+            
         return True
 
 def in_passante_zone(pawn):
@@ -209,17 +216,21 @@ while True:
                 pass
             else:
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    # Track mouse location on button down
                     mouse_tracking(whereMouseIs)
                     current_moving_piece = which_piece_mouse_selects()
                     
                 if event.type == pygame.MOUSEBUTTONUP and check_mouse_in_border(whereMouseIs):
+                    # Track mouse location on button up
                     mouse_tracking(whereMouseIs)
                     if current_moving_piece:
+                        # Checks if piece has moved / can move
                         if piece_moved(current_moving_piece, piece_can_move_here(current_moving_piece)):
+                            # if its moved, move sprite, center it and handle any collisions
                             current_moving_piece.rect.topleft = whereMouseIs
                             center_pieces(current_moving_piece)
                             handle_collisions(current_moving_piece)
-                            
+                            # update last moved piece for possible enpassante, other pawn specific checks
                             piece_that_moved_last = current_moving_piece
                             if current_moving_piece in white_pawns or current_moving_piece in black_pawns:
                                 promote_pawn(current_moving_piece)
@@ -227,6 +238,7 @@ while True:
                                 if current_moving_piece.moved == False:
                                     current_moving_piece.moved = True
                             
+                            # Switch turn and update board
                             if white_players_turn:
                                 white_players_turn = False
                             else:
