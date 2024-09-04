@@ -23,7 +23,7 @@ class Pawn(piece):
                     if self.rect.collidelist(blackEnPassanteZone) != -1 and self.board[piece.index+1][piece.indexJ] == 0:
                         return (self.indexI+1,piece.indexJ)
                         
-    def get_moves(self, whiteEnPassanteZone, blackEnPassanteZone):
+    def get_moves(self, whiteEnPassanteZone, blackEnPassanteZone, last_moved_piece):
             moves = []
             if self.promoted:
                 # If promoted to queen change move set
@@ -37,6 +37,9 @@ class Pawn(piece):
                             # Moves 2 ahead
                             if self.board[self.indexI-2][self.indexJ] == 0:
                                 moves.append((self.indexI-2,self.indexJ))
+                            # Moves 1 ahead
+                            if self.board[self.indexI-1][self.indexJ] == 0:
+                                moves.append((self.indexI-1,self.indexJ))
                         else:
                             # Moves 1 ahead
                             if self.board[self.indexI-1][self.indexJ] == 0:
@@ -57,7 +60,7 @@ class Pawn(piece):
                             if self.board[self.indexI-1][self.indexJ+1] < 1:
                                 moves.append((self.indexI-1,self.indexJ+1))
                                 
-                        moves.append(self.en_passante(whiteEnPassanteZone, blackEnPassanteZone))
+                        moves.append(self.en_passante(whiteEnPassanteZone, blackEnPassanteZone, last_moved_piece))
                         return moves
                             
                 elif self.color == 'black':
@@ -65,6 +68,8 @@ class Pawn(piece):
                         if self.moved == False:
                             if self.board[self.indexI+2][self.indexJ] == 0:
                                 moves.append((self.indexI+2,self.indexJ))
+                            if self.board[self.indexI+1][self.indexJ] == 0:
+                                moves.append((self.indexI+1,self.indexJ))
                         else:
                             if self.board[self.indexI+1][self.indexJ] == 0:
                                 moves.append((self.indexI+1,self.indexJ))
@@ -85,7 +90,7 @@ class Pawn(piece):
                             if self.board[self.indexI+1][self.indexJ+1] > 1:
                                 moves.append((self.indexI+1,self.indexJ+1))
                         
-                        moves.append(self.en_passante(whiteEnPassanteZone, blackEnPassanteZone))
+                        moves.append(self.en_passante(whiteEnPassanteZone, blackEnPassanteZone, last_moved_piece))
                         return moves
             
 
