@@ -6,6 +6,7 @@ class Pawn(piece):
         self.promoted = False
         self.moved = False
         self.justMovedTwice = False
+        self.in_passante_zone = False
         super().__init__(color, indexIOnArray, indexJOnArray, boardArray)
     
     def get_image(self):
@@ -14,16 +15,16 @@ class Pawn(piece):
         else:
             return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}pawn.png')
         
-    def en_passante(self, whiteEnPassanteZone, blackEnPassanteZone,piece):
+    def en_passante(self, piece):
             if self.promoted == False:
                 if self.color == 'white':
-                    if self.rect.collidelist(whiteEnPassanteZone) != -1 and self.board[piece.index-1][piece.indexJ] == 0:
-                        return (self.indexI-1,piece.indexJ)
+                    if self.board[piece.indexI][piece.indexJ] == -1 and piece.indexI == self.indexI:
+                            return [(self.indexI-1,piece.indexJ)]
                 elif self.color == 'black':
-                    if self.rect.collidelist(blackEnPassanteZone) != -1 and self.board[piece.index+1][piece.indexJ] == 0:
-                        return (self.indexI+1,piece.indexJ)
+                    if self.board[piece.indexI][piece.indexJ] == 1 and piece.indexI == self.indexI:
+                        return [(self.indexI+1,piece.indexJ)]
                         
-    def get_moves(self, whiteEnPassanteZone, blackEnPassanteZone, last_moved_piece):
+    def get_moves(self):
             moves = []
             if self.promoted:
                 # If promoted to queen change move set
@@ -60,7 +61,6 @@ class Pawn(piece):
                             if self.board[self.indexI-1][self.indexJ+1] < 1:
                                 moves.append((self.indexI-1,self.indexJ+1))
                                 
-                        moves.append(self.en_passante(whiteEnPassanteZone, blackEnPassanteZone, last_moved_piece))
                         return moves
                             
                 elif self.color == 'black':
@@ -90,18 +90,15 @@ class Pawn(piece):
                             if self.board[self.indexI+1][self.indexJ+1] > 1:
                                 moves.append((self.indexI+1,self.indexJ+1))
                         
-                        moves.append(self.en_passante(whiteEnPassanteZone, blackEnPassanteZone, last_moved_piece))
                         return moves
             
 
     def promote_pawn(self):
-        if self.onBoard:
             self.promoted = True
             self.surface = self.reduce_image_size()
 
 
     def diagonal_moves(self):
-        if self.onBoard:
             moves = []
             if self.color == 'white':
                 # top-right direction moves
@@ -198,7 +195,6 @@ class Pawn(piece):
                 return moves
     
     def linear_moves(self):
-        if self.onBoard:
             moves = []
             if self.color == 'white':
                 # Up direction moves

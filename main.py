@@ -81,6 +81,7 @@ tile_index = {
 def DrawBoardBorder():
     # Draws a rect border around the board to prevent the pieces from leaving the board
     pygame.draw.rect(screen, (0,0,0), board.surface.get_rect(), width = 2)
+    
 # Updates the position array for every piece after every turn so the correct moves can be decided
 def UpdateBoard(pieces: list):
     for piece in pieces:
@@ -149,8 +150,11 @@ def handle_collisions(current_piece):
 def piece_can_move_here(piece):
     tile, tiles_index = where_piece_tries_to_move()
     piece_potential_moves = None
-    if piece in white_pawns or piece in black_pawns:
-        piece_potential_moves = piece.get_moves(whiteEnPassanteZone, blackEnPassanteZone, piece_that_moved_last)
+    if (piece in white_pawns or piece in black_pawns ) and piece.in_passante_zone:
+        if piece.en_passante(piece_that_moved_last):
+            piece_potential_moves = piece.get_moves() + piece.en_passante(piece_that_moved_last)
+        else:
+            piece_potential_moves = piece.get_moves()
     else:
         piece_potential_moves = piece.get_moves()
         
@@ -163,6 +167,7 @@ def piece_can_move_here(piece):
 def where_piece_tries_to_move():
     if mouse_point.collidelist(collisionlist) != -1:
         return collisionlist[mouse_point.collidelist(collisionlist)], tile_index[f'{mouse_point.collidelist(collisionlist)}']
+    
 def piece_moved(moved_piece, tile_index):
     if tile_index:
         # Save info from piece
@@ -174,14 +179,25 @@ def piece_moved(moved_piece, tile_index):
         # Make changes to info of piece
         moved_piece.indexI, moved_piece.indexJ = tile_index
         return True
-    
+
+def in_passante_zone(pawn):
+    if white_players_turn:
+        if pawn.rect.collidelist(whiteEnPassanteZone) != -1:
+            pawn.in_passante_zone = True
+        else:
+            pawn.in_passante_zone = False
+    else:
+        if pawn.rect.collisionlist(blackEnPassanteZone) != -1:
+            pawn.in_passante_zone = True
+        else:
+            pawn.in_passante_zone = False
     
 game_over = False
 # If not white players turn it is black players
 white_players_turn = True
 current_moving_piece = None
 piece_that_moved_last = None
-
+white_pawn_En_Passante = False
 while True:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -201,9 +217,13 @@ while True:
                             current_moving_piece.rect.topleft = whereMouseIs
                             center_pieces(current_moving_piece)
                             handle_collisions(current_moving_piece)
+                            
                             piece_that_moved_last = current_moving_piece
                             if current_moving_piece in white_pawns or current_moving_piece in black_pawns:
                                 promote_pawn(current_moving_piece)
+                                in_passante_zone(current_moving_piece)
+                            
+                            UpdateBoard(list_of_pieces)
                     
     screen.fill('white')
     whereMouseIs = pygame.mouse.get_pos()
@@ -212,6 +232,6 @@ while True:
     DrawBoardBorder()
     pieces_on_board(list_of_pieces)
     
-    UpdateBoard(list_of_pieces)
+
     pygame.display.flip()
     clock.tick(60)
