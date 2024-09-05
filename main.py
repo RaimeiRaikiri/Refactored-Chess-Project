@@ -141,12 +141,14 @@ def handle_collisions(current_piece):
             # If collided with remove from gameloop and list of pieces
             collided_piece = black_pieces[current_piece.rect.collidelist(black_pieces)]
             list_of_pieces.remove(collided_piece)
+            black_pieces.remove(collided_piece)
             
     else:
         if current_piece.rect.collidelist(white_pieces) != -1:
             # If collided with remove from gameloop and list of pieces
             collided_piece = white_pieces[current_piece.rect.collidelist(white_pieces)]
             list_of_pieces.remove(collided_piece)
+            white_pieces.remove(collided_piece)
 
 def piece_can_move_here(piece):
     tile, tiles_index = where_piece_tries_to_move()
@@ -200,12 +202,33 @@ def in_passante_zone(pawn):
             pawn.in_passante_zone = True
         else:
             pawn.in_passante_zone = False
-    
+
+def check():
+    if white_players_turn:
+        moves = []
+        for piece in black_pieces:
+            pieceMoves = piece.get_moves()
+            if pieceMoves:
+                moves += pieceMoves
+        if (whiteking.indexI, whiteking.indexJ) in moves:
+            return 'white'
+    else:
+        moves = []
+        for piece in white_pieces:
+            pieceMoves = piece.get_moves()
+            if pieceMoves:
+                moves += pieceMoves
+        if (blackking.indexI, blackking.indexJ) in moves:
+            return 'black'
+        
 game_over = False
 # If not white players turn it is black players
 white_players_turn = True
 current_moving_piece = None
 piece_that_moved_last = None
+gameFont = pygame.font.Font("freesansbold.ttf", 32)
+white_in_check = False
+black_in_check = False
 
 while True:
     for event in pygame.event.get():
@@ -244,6 +267,18 @@ while True:
                             else:
                                 white_players_turn = True
                             UpdateBoard(list_of_pieces)
+                            if check() == 'white':
+                                white_in_check = True
+                            else:
+                                white_in_check = False
+                            
+                            if check() == 'black':
+                                black_in_check = True
+                            else:
+                                black_in_check = False
+                            
+                              
+                                
                     
     screen.fill('white')
     whereMouseIs = pygame.mouse.get_pos()
@@ -251,7 +286,12 @@ while True:
     screen.blit(board.surface, (0,0))
     DrawBoardBorder()
     pieces_on_board(list_of_pieces)
-    
+    if white_in_check:
+        white_check_text = gameFont.render('white in check', False,'black','white')
+        screen.blit(white_check_text, (900,800))
+    if black_in_check:
+        black_check_text = gameFont.render('black in check', False,'black','white')
+        screen.blit(black_check_text, (900,800))
 
     pygame.display.flip()
     clock.tick(60)
