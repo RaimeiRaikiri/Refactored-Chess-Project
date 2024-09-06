@@ -171,26 +171,68 @@ def piece_can_move_here(piece):
                 if possible_passante and passante_move[0] == move:
                     board.positionArray[piece_that_moved_last.indexI][piece_that_moved_last.indexJ] == 0
                     list_of_pieces.remove(piece_that_moved_last)
-                return tiles_index
+                return tiles_index, tile
     
 
 def where_piece_tries_to_move():
     if mouse_point.collidelist(collisionlist) != -1:
         return collisionlist[mouse_point.collidelist(collisionlist)], tile_index[f'{mouse_point.collidelist(collisionlist)}']
     
-def piece_moved(moved_piece, tile_index):
+def piece_moved(moved_piece, tile_index, tile):
     if tile_index:
+        if simulate_move_for_check_restriction(moved_piece, tile_index, tile):
+            # Save info from piece
+            piece_index = (moved_piece.indexI,moved_piece.indexJ)
+            piece_number = board.positionArray[piece_index[0]][piece_index[1]]
+            # Make changes to the board
+            board.positionArray[piece_index[0]][piece_index[1]] = 0
+            board.positionArray[tile_index[0]][tile_index[1]] = piece_number
+            # Make changes to info of piece
+            moved_piece.indexI, moved_piece.indexJ = tile_index
+                
+            return True
+
+def simulate_move_for_check_restriction(moved_piece, tile_index, tile):
+
         # Save info from piece
         piece_index = (moved_piece.indexI,moved_piece.indexJ)
         piece_number = board.positionArray[piece_index[0]][piece_index[1]]
         # Make changes to the board
         board.positionArray[piece_index[0]][piece_index[1]] = 0
+        previous_tile_state = board.positionArray[tile_index[0]][tile_index[1]]
+        
+        displaced_piece = None
+        if tile.collidelist(list_of_pieces) != -1:
+            displaced_piece = list_of_pieces[tile.collidelist(list_of_pieces)]
+        if displaced_piece:
+            if displaced_piece.color == 'white':
+                white_pieces.remove(displaced_piece)
+            else:
+                black_pieces.remove(displaced_piece)
+    
         board.positionArray[tile_index[0]][tile_index[1]] = piece_number
         # Make changes to info of piece
         moved_piece.indexI, moved_piece.indexJ = tile_index
-            
-        return True
-
+        checked = check()
+        
+        # Revert changes to piece and board
+        moved_piece.indexI, moved_piece.indexJ = piece_index
+        if displaced_piece:
+            if displaced_piece.color == 'white':
+                white_pieces.append(displaced_piece)
+            else:
+                black_pieces.append(displaced_piece)
+                
+        board.positionArray[piece_index[0]][piece_index[1]] = piece_number
+        board.positionArray[tile_index[0]][tile_index[1]] = previous_tile_state
+        
+        # Check if that move would result in check
+        if white_players_turn and checked == 'white':
+            return False
+        elif not white_players_turn and checked == 'black':
+            return False
+        else:
+            return True
 def in_passante_zone(pawn):
     if white_players_turn:
         if pawn.rect.collidelist(whiteEnPassanteZone) != -1:
@@ -248,7 +290,13 @@ while True:
                     mouse_tracking(whereMouseIs)
                     if current_moving_piece:
                         # Checks if piece has moved / can move
-                        if piece_moved(current_moving_piece, piece_can_move_here(current_moving_piece)):
+                        
+                        # Prevents impossible attempt to unpack a None type
+                        tile_position, tile_rect = None, None
+                        if piece_can_move_here(current_moving_piece):
+                            tile_position, tile_rect = piece_can_move_here(current_moving_piece)
+                        
+                        if piece_moved(current_moving_piece, tile_position, tile_rect):
                             # if its moved, move sprite, center it and handle any collisions
                             current_moving_piece.rect.topleft = whereMouseIs
                             center_pieces(current_moving_piece)
@@ -289,9 +337,15 @@ while True:
     if white_in_check:
         white_check_text = gameFont.render('white in check', False,'black','white')
         screen.blit(white_check_text, (900,800))
-    if black_in_check:
+    elif black_in_check:
         black_check_text = gameFont.render('black in check', False,'black','white')
         screen.blit(black_check_text, (900,800))
+    elif white_players_turn:
+        white_turn_text =  gameFont.render('white turn', False, 'black', 'white')
+        screen.blit(white_turn_text, (900,200))
+    else:
+        black_turn_text = gameFont.render('black turn', False, 'black', 'white')
+        screen.blit(black_turn_text, (900,200))
 
     pygame.display.flip()
     clock.tick(60)
