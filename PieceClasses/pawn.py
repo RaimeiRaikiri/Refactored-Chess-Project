@@ -5,7 +5,6 @@ class Pawn(piece):
     def __init__(self, color, indexIOnArray: int, indexJOnArray: int, boardArray: list[list]):
         self.promoted = False
         self.moved = False
-        self.justMovedTwice = False
         self.in_passante_zone = False
         super().__init__(color, indexIOnArray, indexJOnArray, boardArray)
     

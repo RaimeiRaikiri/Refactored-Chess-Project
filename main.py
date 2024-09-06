@@ -116,16 +116,6 @@ def check_mouse_in_border(whereMouseIs):
         return True
     else:
         return False
-
-def opposite_pawn_moved_twice():
-    if white_players_turn:
-        for piece in black_pawns:
-            if piece.justMovedTwice and piece.onBoard:
-                return True, piece
-    else:
-        for piece in white_pawns:
-                if piece.justMovedTwice and piece.onBoard:
-                    return True, piece
                 
 def promote_pawn(piece):
     if white_players_turn:
