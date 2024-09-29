@@ -26,4 +26,4 @@ class piece:
         
     # Initial position set by index position
     def get_position(self):
-        return ((self.indexJ+1)*100, (self.indexI+1)*100)
+        return (((self.indexJ+1)*100)+200 , ((self.indexI+1)*100) +80)

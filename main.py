@@ -80,7 +80,7 @@ tile_index = {
 
 def DrawBoardBorder():
     # Draws a rect border around the board to prevent the pieces from leaving the board
-    pygame.draw.rect(screen, (0,0,0), board.surface.get_rect(), width = 2)
+    pygame.draw.rect(screen, (0,0,0), board.surface.get_rect(topleft=(200,80)), width = 2)
     
 # Updates the position array for every piece after every turn so the correct moves can be decided
 def UpdateBoard(pieces: list):
@@ -112,7 +112,7 @@ def mouse_tracking(whereMouseIs):
     pygame.draw.rect(screen, (0,0,0), mouse_point, width = 0)
     
 def check_mouse_in_border(whereMouseIs):
-    if board.surface.get_rect().collidepoint(whereMouseIs):
+    if board.surface.get_rect(topleft=(200,80)).collidepoint(whereMouseIs):
         return True
     else:
         return False
@@ -455,7 +455,7 @@ while True:
     screen.fill('white')
     whereMouseIs = pygame.mouse.get_pos()
     # Board set up
-    screen.blit(board.surface, (0,0))
+    screen.blit(board.surface, (200,80))
     DrawBoardBorder()
     pieces_on_board(list_of_pieces)
     if black_wins or white_wins:
