@@ -305,9 +305,6 @@ def in_checkmate():
                             return False
 
         return True
-    
-            
-
 
 game_over = False
 # If not white players turn it is black players
@@ -322,13 +319,18 @@ white_wins = False
 black_wins = False
 Draw = False
 
+quit_rect_on_screen = pygame.Rect(550,550,100,50)
+
 while True:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if game_over:
-                pass
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if quit_rect_on_screen.collidepoint(whereMouseIs):
+                        pygame.quit()
+                        sys.exit()
             else:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # Track mouse location on button down
@@ -388,8 +390,6 @@ while True:
                                     game_over = True
                                     
                               
-                                
-                    
     screen.fill('white')
     whereMouseIs = pygame.mouse.get_pos()
     # Board set up
@@ -412,5 +412,45 @@ while True:
         black_turn_text = gameFont.render('black turn', False, 'black', 'white')
         screen.blit(black_turn_text, (900,200))
 
+    # So it doesn't keep creating these when no one has won yet
+    if white_wins or black_wins:
+        # Create surface for text and quit button to be placed
+        end_game_surface = pygame.Surface((600,600))
+        end_game_surface.fill('white')
+        
+        # Creates quit button and puts it on the end screen surface
+        quit_surface = pygame.Surface((100,50))
+        quit_surface.fill('white')
+        if quit_rect_on_screen.collidepoint(whereMouseIs):
+             game_quit_text = gameFont.render(f"Quit", False, 'red', (255,255,255))
+        else:
+            game_quit_text = gameFont.render(f"Quit", False, 'black', (255,255,255))
+        quit_surface.blit(game_quit_text, (15,10))
+
+        if white_wins:
+            # Player win text and adds to final end game surface
+            white_win_text = gameFont.render('White Player Wins!', True, 'black', 'white')
+            end_game_surface.blit(white_win_text,(150,200))
+            # Puts quit button on end game surface and gives it a border
+            end_game_surface.blit(quit_surface, (250,350))
+            quit_rect =  quit_surface.get_rect(topleft=(250,350))
+            pygame.draw.rect(end_game_surface, (0,0,0), quit_rect, 2)
+            # Puts the end game surface on the screen
+            screen.blit(end_game_surface, (300,200))
+            pygame.draw.rect(screen, (255,0,0), end_game_surface.get_rect(topleft=(300,200)), width = 2)
+            
+        if black_wins:
+            # Player win text and adds to final end game surface
+            black_win_text = gameFont.render('Black Player Wins!', True, 'black', 'white')
+            end_game_surface.blit(black_win_text,(150,200))
+            # Puts quit button on end game surface and gives it a border
+            end_game_surface.blit(quit_surface, (250,350))
+            quit_rect =  quit_surface.get_rect(topleft=(250,350))
+            pygame.draw.rect(end_game_surface, (0,0,0), quit_rect, 2)
+            # Puts the end game surface on the screen
+            screen.blit(end_game_surface, (300,200))
+            pygame.draw.rect(screen, (255,0,0), end_game_surface.get_rect(topleft=(300,200)), width = 2)
+            
+        
     pygame.display.flip()
     clock.tick(60)
