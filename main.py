@@ -158,7 +158,7 @@ def piece_can_move_here(piece):
     if piece_potential_moves:
         for move in piece_potential_moves:
             if move == tiles_index:
-                if possible_passante and passante_move[0] == move:
+                if possible_passante and  passante_move and passante_move[0] == move:
                     board.positionArray[piece_that_moved_last.indexI][piece_that_moved_last.indexJ] == 0
                     list_of_pieces.remove(piece_that_moved_last)
                 return tiles_index, tile
@@ -306,6 +306,59 @@ def in_checkmate():
 
         return True
 
+def in_stalemate():
+    if white_players_turn and not white_in_check:
+        moves = []
+        for piece in white_pieces:
+            possible_passante = False
+            # If a pawn and in the en passante zone, check for en passante possible moves
+            if (piece in white_pawns ) and piece.in_passante_zone:
+                possible_passante = True
+                passante_move = piece.en_passante(piece_that_moved_last)
+                if passante_move: # If en passante moves exist
+                    moves = piece.get_moves() + passante_move
+                    for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
+                else:
+                    moves = piece.get_moves()
+                    for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
+            else:
+                moves = piece.get_moves()
+                for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
+
+        return True
+    
+    elif not white_players_turn and not black_in_check:
+        moves = []
+        for piece in black_pieces:
+            possible_passante = False
+            # If a pawn and in the en passante zone, check for en passante possible moves
+            if (piece in black_pawns) and piece.in_passante_zone:
+                possible_passante = True
+                passante_move = piece.en_passante(piece_that_moved_last)
+                if passante_move: # If en passante moves exist
+                    moves = piece.get_moves() + passante_move
+                    for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
+                else:
+                    moves = piece.get_moves()
+                    for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
+            else:
+                moves = piece.get_moves()
+                for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
+
+        return True
+    
 game_over = False
 # If not white players turn it is black players
 white_players_turn = True
@@ -389,6 +442,15 @@ while True:
                                     white_wins = True
                                     game_over = True
                                     
+                            if white_players_turn and not white_in_check:
+                                if in_stalemate():
+                                    Draw = True
+                                    game_over = True
+                            elif not white_players_turn and not black_in_check:
+                                if in_stalemate():
+                                    Draw = True
+                                    game_over = True
+                                    
                               
     screen.fill('white')
     whereMouseIs = pygame.mouse.get_pos()
@@ -426,15 +488,16 @@ while True:
         else:
             game_quit_text = gameFont.render(f"Quit", False, 'black', (255,255,255))
         quit_surface.blit(game_quit_text, (15,10))
+        # Puts quit button on end game surface and gives it a border
+        end_game_surface.blit(quit_surface, (250,350))
+        quit_rect =  quit_surface.get_rect(topleft=(250,350))
+        pygame.draw.rect(end_game_surface, (0,0,0), quit_rect, 2)
 
         if white_wins:
             # Player win text and adds to final end game surface
             white_win_text = gameFont.render('White Player Wins!', True, 'black', 'white')
             end_game_surface.blit(white_win_text,(150,200))
-            # Puts quit button on end game surface and gives it a border
-            end_game_surface.blit(quit_surface, (250,350))
-            quit_rect =  quit_surface.get_rect(topleft=(250,350))
-            pygame.draw.rect(end_game_surface, (0,0,0), quit_rect, 2)
+      
             # Puts the end game surface on the screen
             screen.blit(end_game_surface, (300,200))
             pygame.draw.rect(screen, (255,0,0), end_game_surface.get_rect(topleft=(300,200)), width = 2)
@@ -443,14 +506,33 @@ while True:
             # Player win text and adds to final end game surface
             black_win_text = gameFont.render('Black Player Wins!', True, 'black', 'white')
             end_game_surface.blit(black_win_text,(150,200))
-            # Puts quit button on end game surface and gives it a border
-            end_game_surface.blit(quit_surface, (250,350))
-            quit_rect =  quit_surface.get_rect(topleft=(250,350))
-            pygame.draw.rect(end_game_surface, (0,0,0), quit_rect, 2)
+
             # Puts the end game surface on the screen
             screen.blit(end_game_surface, (300,200))
             pygame.draw.rect(screen, (255,0,0), end_game_surface.get_rect(topleft=(300,200)), width = 2)
             
+    if Draw:
+        end_game_surface = pygame.Surface((600,600))
+        end_game_surface.fill('white')
         
+        # Creates quit button and puts it on the end screen surface
+        quit_surface = pygame.Surface((100,50))
+        quit_surface.fill('white')
+        if quit_rect_on_screen.collidepoint(whereMouseIs):
+                game_quit_text = gameFont.render(f"Quit", False, 'red', (255,255,255))
+        else:
+            game_quit_text = gameFont.render(f"Quit", False, 'black', (255,255,255))
+        quit_surface.blit(game_quit_text, (15,10))
+        # Puts quit button on end game surface and gives it a border
+        end_game_surface.blit(quit_surface, (250,350))
+        quit_rect =  quit_surface.get_rect(topleft=(250,350))
+        pygame.draw.rect(end_game_surface, (0,0,0), quit_rect, 2)
+        
+        draw_text = gameFont.render('You Draw!', True, 'black', 'white')
+        end_game_surface.blit(draw_text,(220,200))
+        # Puts the end game surface on the screen
+        screen.blit(end_game_surface, (300,200))
+        pygame.draw.rect(screen, (255,0,0), end_game_surface.get_rect(topleft=(300,200)), width = 2)
+                
     pygame.display.flip()
     clock.tick(60)
