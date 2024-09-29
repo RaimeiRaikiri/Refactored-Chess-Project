@@ -254,7 +254,7 @@ def check():
         if (blackking.indexI, blackking.indexJ) in moves:
             return 'black'
 
-def get_moves_of_team():
+def in_checkmate():
     if white_players_turn:
         moves = []
         for piece in white_pieces:
@@ -264,13 +264,22 @@ def get_moves_of_team():
                 possible_passante = True
                 passante_move = piece.en_passante(piece_that_moved_last)
                 if passante_move: # If en passante moves exist
-                    moves += piece.get_moves() + passante_move
+                    moves = piece.get_moves() + passante_move
+                    for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
                 else:
-                    moves += piece.get_moves()
+                    moves = piece.get_moves()
+                    for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
             else:
-                moves += piece.get_moves()
+                moves = piece.get_moves()
+                for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
 
-        return moves
+        return True
     else:
         moves = []
         for piece in black_pieces:
@@ -280,29 +289,25 @@ def get_moves_of_team():
                 possible_passante = True
                 passante_move = piece.en_passante(piece_that_moved_last)
                 if passante_move: # If en passante moves exist
-                    moves += piece.get_moves() + passante_move
+                    moves = piece.get_moves() + passante_move
+                    for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
                 else:
-                    moves += piece.get_moves()
+                    moves = piece.get_moves()
+                    for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
             else:
-                moves += piece.get_moves()
+                moves = piece.get_moves()
+                for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
 
-        return moves
+        return True
     
-def check_for_checkmate(all_moves_of_a_team):
-    if white_players_turn and white_in_check:
-        if all_moves_of_a_team == []:
-            return True
-    elif not white_players_turn and black_in_check:
-        if all_moves_of_a_team == []:
-            return True
             
-def check_for_stalemate(all_moves_of_a_team):
-    if white_players_turn and white_in_check:
-        if all_moves_of_a_team == []:
-            return True
-    elif not white_players_turn and black_in_check:
-        if all_moves_of_a_team == []:
-            return True
+
 
 game_over = False
 # If not white players turn it is black players
@@ -373,11 +378,15 @@ while True:
                             else:
                                 black_in_check = False
                             
-                            all_moves_of_a_team = get_moves_of_team()
-                            if white_players_turn and check_for_checkmate(all_moves_of_a_team):
-                                black_wins = True
-                            elif not white_players_turn and check_for_checkmate(all_moves_of_a_team):
-                                white_wins = True
+                            if white_players_turn and white_in_check:
+                                if in_checkmate():
+                                    black_wins = True
+                                    game_over = True
+                            elif not white_players_turn and black_in_check:
+                                if in_checkmate():
+                                    white_wins = True
+                                    game_over = True
+                                    
                               
                                 
                     
@@ -387,8 +396,10 @@ while True:
     screen.blit(board.surface, (0,0))
     DrawBoardBorder()
     pieces_on_board(list_of_pieces)
-    
-    if white_in_check:
+    if black_wins or white_wins:
+        checkmate_text = gameFont.render('Checkmate', False, 'black', 'white')
+        screen.blit(checkmate_text, (900,800))
+    elif white_in_check:
         white_check_text = gameFont.render('white in check', False,'black','white')
         screen.blit(white_check_text, (900,800))
     elif black_in_check:
