@@ -54,4 +54,47 @@ class Knight(piece):
                         moves.append((self.indexI - 1,self.indexJ - 2))
                 
                 return moves
-                        
+            
+            elif self.color ==  'black':
+                # Down - Changing index I by 2 
+                
+                    # Right - Changing index J by 1
+                if self.indexI + 2 < 8 and self.indexJ + 1 < 8:
+                    if self.board[self.indexI + 2][self.indexJ + 1] >= 0:
+                        moves.append((self.indexI + 2,self.indexJ + 1))
+                    # Left - Changing index J by 1
+                if self.indexI + 2 < 8 and self.indexJ - 1 >=0:
+                    if self.board[self.indexI + 2][self.indexJ - 1] >= 0:
+                        moves.append((self.indexI + 2,self.indexJ - 1))
+                # Up - Changing index I by 2
+                   
+                   # Right - Changing index J by 1
+                if self.indexI - 2 >= 0 and self.indexJ + 1 < 8:
+                    if self.board[self.indexI - 2][self.indexJ + 1] >= 0:
+                        moves.append((self.indexI - 2,self.indexJ + 1))
+                    # Left - Changing index J by 1
+                if self.indexI - 2 >= 0 and self.indexJ - 1 >=0:
+                    if self.board[self.indexI - 2][self.indexJ - 1] >= 0:
+                        moves.append((self.indexI - 2,self.indexJ - 1))
+                # Right - Changing J index by 2
+                
+                    # Down - Changing I index by 1
+                if self.indexI + 1 < 8 and self.indexJ + 2 < 8:
+                    if self.board[self.indexI + 1][self.indexJ + 2] >= 0:
+                        moves.append((self.indexI + 1,self.indexJ + 2))
+                    # Up - Changing I index by 1
+                if self.indexI - 1 >= 0 and self.indexJ + 2 < 8:
+                    if self.board[self.indexI - 1][self.indexJ + 2] >= 0:
+                        moves.append((self.indexI - 1,self.indexJ + 2))
+                # Left - Changing J index by 2
+                
+                    # Down - Changing I index by 1
+                if self.indexI + 1 < 8 and self.indexJ - 2 >=0:
+                    if self.board[self.indexI + 1][self.indexJ - 2] >= 0:
+                        moves.append((self.indexI + 1,self.indexJ - 2))
+                    # Up - Changing I index by 1
+                if self.indexI - 1 >= 0 and self.indexJ - 2 >=0:
+                    if self.board[self.indexI - 1][self.indexJ - 2] >= 0:
+                        moves.append((self.indexI - 1,self.indexJ - 2))
+                
+                return moves
