@@ -45,13 +45,14 @@ class King(piece):
                         moves.append((self.indexI-1,self.indexJ-1))
                 
                 return moves
+            
             elif self.color == 'black':
                 # top
-                if self.indexI - 1 < 8:
+                if self.indexI - 1 >= 0:
                     if self.board[self.indexI-1][self.indexJ] >= 0:
                         moves.append((self.indexI-1,self.indexJ))
                 # top-right
-                if self.indexI - 1 < 8 and self.indexJ + 1 < 8:
+                if self.indexI - 1 >= 0 and self.indexJ + 1 < 8:
                     if self.board[self.indexI-1][self.indexJ+1] >= 0:
                         moves.append((self.indexI-1,self.indexJ+1))
                 # right
@@ -75,7 +76,7 @@ class King(piece):
                     if self.board[self.indexI][self.indexJ-1] >= 0:
                         moves.append((self.indexI,self.indexJ-1))
                 # top-left
-                if self.indexI - 1 < 8 and self.indexJ-1 >=0:
+                if self.indexI - 1 >= 0 and self.indexJ-1 >= 0:
                     if self.board[self.indexI-1][self.indexJ-1] >= 0:
                         moves.append((self.indexI-1,self.indexJ-1))
                 
