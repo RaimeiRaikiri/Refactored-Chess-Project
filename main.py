@@ -378,10 +378,6 @@ def coordinate_indicators():
     screen.blit(gameFont.render('7',True, 'black'), (160,220))
     screen.blit(gameFont.render('8',True, 'black'), (160,120))
     
-    
-    
-
-     
 game_over = False
 # If not white players turn it is black players
 white_players_turn = True
