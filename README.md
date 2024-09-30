@@ -9,6 +9,8 @@ Welcome to the Refactored-Chess-Project! The purpose of this repository is withi
 
 This program will faithfully recreate a typical 2-player chess game. 
 
+![Target image the website is based upon](./imgs/Screenshot%202024-09-30%20at%2020.22.58.png "Chess")
+
 # Features 
 
 - Pieces have traditional move sets
