@@ -80,7 +80,7 @@ tile_index = {
 
 def DrawBoardBorder():
     # Draws a rect border around the board to prevent the pieces from leaving the board
-    pygame.draw.rect(screen, (0,0,0), board.surface.get_rect(), width = 2)
+    pygame.draw.rect(screen, (0,0,0), board.surface.get_rect(topleft=(200,80)), width = 2)
     
 # Updates the position array for every piece after every turn so the correct moves can be decided
 def UpdateBoard(pieces: list):
@@ -112,7 +112,7 @@ def mouse_tracking(whereMouseIs):
     pygame.draw.rect(screen, (0,0,0), mouse_point, width = 0)
     
 def check_mouse_in_border(whereMouseIs):
-    if board.surface.get_rect().collidepoint(whereMouseIs):
+    if board.surface.get_rect(topleft=(200,80)).collidepoint(whereMouseIs):
         return True
     else:
         return False
@@ -358,6 +358,25 @@ def in_stalemate():
                             return False
 
         return True
+
+def coordinate_indicators():
+    screen.blit(gameFont.render('a',True, 'black'), (240,882))
+    screen.blit(gameFont.render('b',True, 'black'), (340,882))
+    screen.blit(gameFont.render('c',True, 'black'), (440,882))
+    screen.blit(gameFont.render('d',True, 'black'), (540,882))
+    screen.blit(gameFont.render('e',True, 'black'), (640,882))
+    screen.blit(gameFont.render('f',True, 'black'), (740,882))
+    screen.blit(gameFont.render('g',True, 'black'), (840,882))
+    screen.blit(gameFont.render('h',True, 'black'), (940,882))
+    
+    screen.blit(gameFont.render('1',True, 'black'), (160,820))
+    screen.blit(gameFont.render('2',True, 'black'), (160,720))
+    screen.blit(gameFont.render('3',True, 'black'), (160,620))
+    screen.blit(gameFont.render('4',True, 'black'), (160,520))
+    screen.blit(gameFont.render('5',True, 'black'), (160,420))
+    screen.blit(gameFont.render('6',True, 'black'), (160,320))
+    screen.blit(gameFont.render('7',True, 'black'), (160,220))
+    screen.blit(gameFont.render('8',True, 'black'), (160,120))
     
 game_over = False
 # If not white players turn it is black players
@@ -455,24 +474,25 @@ while True:
     screen.fill('white')
     whereMouseIs = pygame.mouse.get_pos()
     # Board set up
-    screen.blit(board.surface, (0,0))
+    screen.blit(board.surface, (200,80))
     DrawBoardBorder()
     pieces_on_board(list_of_pieces)
+    coordinate_indicators()
     if black_wins or white_wins:
         checkmate_text = gameFont.render('Checkmate', False, 'black', 'white')
-        screen.blit(checkmate_text, (900,800))
+        screen.blit(checkmate_text, (500,30))
     elif white_in_check:
         white_check_text = gameFont.render('white in check', False,'black','white')
-        screen.blit(white_check_text, (900,800))
+        screen.blit(white_check_text, (500,30))
     elif black_in_check:
         black_check_text = gameFont.render('black in check', False,'black','white')
-        screen.blit(black_check_text, (900,800))
+        screen.blit(black_check_text, (500,30))
     elif white_players_turn:
         white_turn_text =  gameFont.render('white turn', False, 'black', 'white')
-        screen.blit(white_turn_text, (900,200))
+        screen.blit(white_turn_text, (500,30))
     else:
         black_turn_text = gameFont.render('black turn', False, 'black', 'white')
-        screen.blit(black_turn_text, (900,200))
+        screen.blit(black_turn_text, (500,30))
 
     # So it doesn't keep creating these when no one has won yet
     if white_wins or black_wins:
