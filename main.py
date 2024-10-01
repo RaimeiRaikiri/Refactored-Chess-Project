@@ -152,15 +152,16 @@ def piece_can_move_here(piece):
             piece_potential_moves = piece.get_moves() + passante_move
         else:
             piece_potential_moves = piece.get_moves()
+    elif piece == whiteking:
+            piece_potential_moves =  piece.get_moves(whitecastle1,whitecastle2, opposition_moves())
+    elif piece == blackking:
+            piece_potential_moves =  piece.get_moves(blackcastle1,blackcastle2, opposition_moves())
     else:
         piece_potential_moves = piece.get_moves()
         
     if piece_potential_moves:
         for move in piece_potential_moves:
             if move == tiles_index:
-                if possible_passante and  passante_move and passante_move[0] == move:
-                    board.positionArray[piece_that_moved_last.indexI][piece_that_moved_last.indexJ] == 0
-                    list_of_pieces.remove(piece_that_moved_last)
                 return tiles_index, tile
     
 
@@ -171,17 +172,72 @@ def where_piece_tries_to_move():
 def piece_moved(moved_piece, tile_index, tile):
     if tile_index:
         if simulate_move_for_check_restriction(moved_piece, tile_index, tile):
-            # Save info from piece
-            piece_index = (moved_piece.indexI,moved_piece.indexJ)
-            piece_number = board.positionArray[piece_index[0]][piece_index[1]]
-            # Make changes to the board
-            board.positionArray[piece_index[0]][piece_index[1]] = 0
-            board.positionArray[tile_index[0]][tile_index[1]] = piece_number
-            # Make changes to info of piece
-            moved_piece.indexI, moved_piece.indexJ = tile_index
+            if moved_piece == whiteking:
+                if whiteking.moved == False:
+                    if (tile_index[0] == 7 and tile_index[1] == 2):
+                        move_piece(moved_piece, tile_index, tile)
+                        board.positionArray[whitecastle1.indexI][whitecastle1.indexJ] = 0
+                        board.positionArray[7][3] = 2 
+                        whitecastle1.rect.topleft = board.tileArray[7][3].center
+                        center_pieces(whitecastle1)
+                        whiteking.moved = True
+                        whitecastle1.moved = True
+                    elif (tile_index[0] == 7 and tile_index[1] == 6):
+                        move_piece(moved_piece, tile_index, tile)
+                        board.positionArray[whitecastle2.indexI][whitecastle2.indexJ] = 0
+                        board.positionArray[7][5] = 2 
+                        whitecastle2.rect.topleft = board.tileArray[7][5].center
+                        center_pieces(whitecastle2)
+                        whiteking.moved = True
+                        whitecastle2.moved = True
+                    else:
+                        move_piece(moved_piece, tile_index, tile)    
+                else:
+                        move_piece(moved_piece, tile_index, tile)        
+            elif moved_piece == blackking:
+                if blackking.moved == False:
+                    if (tile_index[0] == 0 and tile_index[1] == 2):
+                        move_piece(moved_piece, tile_index, tile)
+                        board.positionArray[blackcastle1.indexI][blackcastle1.indexJ] = 0
+                        board.positionArray[0][3] = 2 
+                        blackcastle1.rect.topleft = board.tileArray[0][3].center
+                        center_pieces(blackcastle1)
+                        blackking.moved = True
+                        blackcastle1.moved = True
+                    elif (tile_index[0] == 0 and tile_index[1] == 6):
+                        move_piece(moved_piece, tile_index, tile)
+                        board.positionArray[blackcastle2.indexI][blackcastle2.indexJ] = 0
+                        board.positionArray[0][5] = 2 
+                        blackcastle2.rect.topleft = board.tileArray[0][5].center
+                        center_pieces(blackcastle2)
+                        blackking.moved = True
+                        blackcastle2.moved = True
+                    else:
+                        move_piece(moved_piece, tile_index, tile)
+                else:
+                    move_piece(moved_piece, tile_index, tile)
+            elif moved_piece in black_pawns or moved_piece in white_pawns:
+                if (moved_piece in white_pawns or moved_piece in black_pawns ) and moved_piece.in_passante_zone:
+                    board.positionArray[piece_that_moved_last.indexI][piece_that_moved_last.indexJ] == 0
+                    list_of_pieces.remove(piece_that_moved_last)
+                    move_piece(moved_piece, tile_index, tile)
+                else:
+                    move_piece(moved_piece, tile_index, tile)
+            else:
+                move_piece(moved_piece, tile_index, tile)
                 
             return True
 
+def move_piece(moved_piece, tile_index, tile):
+    # Save info from piece
+    piece_index = (moved_piece.indexI,moved_piece.indexJ)
+    piece_number = board.positionArray[piece_index[0]][piece_index[1]]
+    # Make changes to the board
+    board.positionArray[piece_index[0]][piece_index[1]] = 0
+    board.positionArray[tile_index[0]][tile_index[1]] = piece_number
+    # Make changes to info of piece
+    moved_piece.indexI, moved_piece.indexJ = tile_index
+            
 def simulate_move_for_check_restriction(moved_piece, tile_index, tile):
 
         # Save info from piece
@@ -240,6 +296,8 @@ def check():
     if white_players_turn:
         moves = []
         for piece in black_pieces:
+            if piece == blackking:
+                continue
             pieceMoves = piece.get_moves()
             if pieceMoves:
                 moves += pieceMoves
@@ -248,6 +306,8 @@ def check():
     else:
         moves = []
         for piece in white_pieces:
+            if piece == whiteking:
+                continue
             pieceMoves = piece.get_moves()
             if pieceMoves:
                 moves += pieceMoves
@@ -273,6 +333,11 @@ def in_checkmate():
                     for move in moves:
                         if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
                             return False
+            elif piece == whiteking:
+                moves = piece.get_moves(whitecastle1,whitecastle2, opposition_moves())
+                for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
             else:
                 moves = piece.get_moves()
                 for move in moves:
@@ -296,6 +361,11 @@ def in_checkmate():
                 else:
                     moves = piece.get_moves()
                     for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
+            elif piece == blackking:
+                moves = piece.get_moves(blackcastle1,blackcastle2, opposition_moves())
+                for move in moves:
                         if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
                             return False
             else:
@@ -325,6 +395,11 @@ def in_stalemate():
                     for move in moves:
                         if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
                             return False
+            elif piece == whiteking:
+                moves = piece.get_moves(whitecastle1,whitecastle2, opposition_moves())
+                for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
             else:
                 moves = piece.get_moves()
                 for move in moves:
@@ -351,6 +426,11 @@ def in_stalemate():
                     for move in moves:
                         if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
                             return False
+            elif piece == blackking:
+                moves = piece.get_moves(blackcastle1,blackcastle2, opposition_moves())
+                for move in moves:
+                        if simulate_move_for_check_restriction(piece, move, board.tileArray[move[0]][move[1]]):
+                            return False
             else:
                 moves = piece.get_moves()
                 for move in moves:
@@ -359,6 +439,44 @@ def in_stalemate():
 
         return True
 
+def opposition_moves():
+    if white_players_turn:
+        moves = []
+        for piece in black_pieces:
+            possible_passante = False
+            # If a pawn and in the en passante zone, check for en passante possible moves
+            if (piece in black_pawns) and piece.in_passante_zone:
+                possible_passante = True
+                passante_move = piece.en_passante(piece_that_moved_last)
+                if passante_move: # If en passante moves exist
+                    moves += piece.get_moves() + passante_move
+                else:
+                    moves = piece.get_moves()
+            elif piece == blackking:
+                moves += piece.get_moves(blackcastle1,blackcastle2, (-1,-1))
+            else:
+                moves += piece.get_moves()
+
+        return moves
+    else:
+        moves = []
+        for piece in white_pieces:
+            possible_passante = False
+            # If a pawn and in the en passante zone, check for en passante possible moves
+            if (piece in white_pawns ) and piece.in_passante_zone:
+                possible_passante = True
+                passante_move = piece.en_passante(piece_that_moved_last)
+                if passante_move: # If en passante moves exist
+                    moves += piece.get_moves() + passante_move
+                else:
+                    moves += piece.get_moves()
+            elif piece == whiteking:
+                moves += piece.get_moves(whitecastle1,whitecastle2, (-1,-1))
+            else:
+                moves += piece.get_moves()
+
+        return moves
+        
 def coordinate_indicators():
     screen.blit(gameFont.render('a',True, 'black'), (240,882))
     screen.blit(gameFont.render('b',True, 'black'), (340,882))
