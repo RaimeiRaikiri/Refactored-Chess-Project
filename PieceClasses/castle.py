@@ -5,6 +5,7 @@ class Castle(piece):
     
     def __init__(self, color, indexIOnArray: int, indexJOnArray: int, boardArray: list[list]):
         super().__init__(color, indexIOnArray, indexJOnArray, boardArray)
+        self.moved = False
         
     def get_image(self):
             return pygame.image.load(f'./PieceClasses/images/{self.color}pieces/{self.color}castle.png')
